@@ -1,0 +1,23 @@
+<table class="table table-sm table-hover">
+  <thead class="thead-default">
+    <tr>
+      <th>#</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Age</th>
+      <th>Skype</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let person of service.getPersons(); let id = index" (click)="getPersonDetails(id)">
+      <td>{{person.id}}</td>
+      <td>{{person.firstName}}</td>
+      <td>{{person.lastName}}</td>
+      <td>{{person.email}}</td>
+      <td>{{person.age}}</td>
+      <td>{{person.skype}}</td>
+    </tr>
+  </tbody>
+</table>
+<button type="button" class="btn btn-danger" (click)="service.clearPersons()">Clear</button>

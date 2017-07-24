@@ -1,0 +1,53 @@
+<div class="container">
+    <h1>Reactive Form </h1>
+    <div> Person ID: {{id+1}} </div>
+    <div> First Name: {{personInformationForm.value.firstName }} </div>
+    <div> Last Name: {{personInformationForm.value.lastName }} </div>
+    <div> Email: {{personInformationForm.value.email }} </div>
+    <div> Age: {{personInformationForm.value.age || '-'}} </div>
+    <div> Skype: {{personInformationForm.value.skype || '-'}} </div>
+    <form (ngSubmit)="service.editPerson(personInformationForm.value, id); createForm()" [formGroup]="personInformationForm">
+
+      <div formArrayName="hobbies" class="card bg-faded card-block">
+        <strong>Hobbies:</strong>
+        <div class="" *ngFor="let hobbie of personInformationForm.controls.hobbies.controls; let i=index" [formGroupName]="i" >
+          <div style="margin-left: 1em;">
+            <div class="form-group">
+              <label class="center-block">Hobbie #{{i+1}}:
+                <input class="form-control" formControlName="hobbie">
+              </label>
+            </div>
+          </div>
+          <br>
+        </div>
+        <button (click)="addHobbie()" type="button">Add a Hobbie</button>
+      </div>
+
+      <div formArrayName="telephones" class="card bg-faded card-block">
+        <strong>Telephones:</strong>
+        <div class="" *ngFor="let telephone of personInformationForm.controls.telephones.controls; let i=index" [formGroupName]="i" >
+          <div style="margin-left: 1em;">
+            <div class="form-group">
+              <label class="center-block">Phone #{{i+1}}:
+                <input class="form-control" formControlName="telephone">
+              </label>
+            </div>
+          </div>
+          <br>
+        </div>
+        <button (click)="addTelephone()" type="button">Add a Telephone</button>
+      </div>
+
+      <div class="form-group">
+        <label for="nickname">Nickname</label>
+        <input type="text" class="form-control"  id="nickname" 
+               formControlName="nickname">
+        <div *ngIf="formErrors.nickname" class="alert alert-danger">
+          {{ formErrors.nickname }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="!personInformationForm.valid || personInformationForm.pristine">Save</button>
+
+    </form>
+</div>
