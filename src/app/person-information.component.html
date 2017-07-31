@@ -1,16 +1,81 @@
 <div class="container">
     <h1>Reactive Form </h1>
-    <div> Person ID: {{id+1}} </div>
-    <div> First Name: {{personInformationForm.value.firstName }} </div>
-    <div> Last Name: {{personInformationForm.value.lastName }} </div>
-    <div> Email: {{personInformationForm.value.email }} </div>
-    <div> Age: {{personInformationForm.value.age || '-'}} </div>
-    <div> Skype: {{personInformationForm.value.skype || '-'}} </div>
-    <form (ngSubmit)="service.editPerson(personInformationForm.value, id); createForm()" [formGroup]="personInformationForm">
+    <div class="card"> Person ID: {{id+1}} </div>
+    <form (ngSubmit)="onSubmit()" [formGroup]="personInformationForm">
+
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="firstName"
+          formControlName="firstName" 
+          required
+        >
+        <div *ngIf="formErrors.firstName" class="alert alert-danger">
+          {{ formErrors.firstName }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="lastName"
+          formControlName="lastName" 
+          required
+        >
+        <div *ngIf="formErrors.lastName" class="alert alert-danger">
+          {{ formErrors.lastName }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          class="form-control" 
+          id="email"
+          formControlName="email" 
+          required
+        >
+        <div *ngIf="formErrors.email" class="alert alert-danger">
+          {{ formErrors.email }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input 
+          type="number" 
+          class="form-control" 
+          id="age"
+          formControlName="age"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="skype">Skype</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="skype"
+          formControlName="skype"
+        >
+        <div *ngIf="formErrors.skype" class="alert alert-danger">
+          {{ formErrors.skype }}
+        </div>
+      </div>
 
       <div formArrayName="hobbies" class="card bg-faded card-block">
         <strong>Hobbies:</strong>
-        <div class="" *ngFor="let hobbie of personInformationForm.controls.hobbies.controls; let i=index" [formGroupName]="i" >
+        <div 
+          class="" 
+          *ngFor="let hobbie of personInformationForm.controls.hobbies.controls; 
+          let i=index" 
+          [formGroupName]="i" 
+        >
           <div style="margin-left: 1em;">
             <div class="form-group">
               <label class="center-block">Hobbie #{{i+1}}:
@@ -25,7 +90,12 @@
 
       <div formArrayName="telephones" class="card bg-faded card-block">
         <strong>Telephones:</strong>
-        <div class="" *ngFor="let telephone of personInformationForm.controls.telephones.controls; let i=index" [formGroupName]="i" >
+        <div 
+          class="" 
+          *ngFor="let telephone of personInformationForm.controls.telephones.controls; 
+          let i=index" 
+          [formGroupName]="i" 
+        >
           <div style="margin-left: 1em;">
             <div class="form-group">
               <label class="center-block">Phone #{{i+1}}:
@@ -40,14 +110,22 @@
 
       <div class="form-group">
         <label for="nickname">Nickname</label>
-        <input type="text" class="form-control"  id="nickname" 
-               formControlName="nickname">
+        <input 
+          type="text" 
+          class="form-control"  
+          id="nickname" 
+          formControlName="nickname"
+        >
         <div *ngIf="formErrors.nickname" class="alert alert-danger">
           {{ formErrors.nickname }}
         </div>
       </div>
 
-      <button type="submit" class="btn btn-success" [disabled]="!personInformationForm.valid || personInformationForm.pristine">Save</button>
+      <button 
+        type="submit" 
+        class="btn btn-success" 
+        [disabled]="!personInformationForm.valid || personInformationForm.pristine"
+      >Save</button>
 
     </form>
 </div>

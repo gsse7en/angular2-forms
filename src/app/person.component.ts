@@ -25,7 +25,7 @@ export class PersonComponent implements AfterViewChecked {
       'required':      'First Name is required.',
       'minlength':     'First Name must be at least 4 characters long.'
     },
-   'lastName': {
+    'lastName': {
       'required':      'Last Name is required.',
       'minlength':     'Last Name must be at least 4 characters long.'
     },
@@ -40,6 +40,13 @@ export class PersonComponent implements AfterViewChecked {
 
   personForm: NgForm;
   @ViewChild('personForm') currentForm: NgForm;
+
+  constructor(private service: LocalstorageService) {}
+
+  onSubmit() {
+    this.service.addPerson(this.person);
+    this.personForm.reset()
+  }
 
   ngAfterViewChecked() {
     this.formChanged();
@@ -70,7 +77,5 @@ export class PersonComponent implements AfterViewChecked {
       }
     }
   }
-
-  constructor(private service: LocalstorageService) {}
 
 }

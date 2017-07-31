@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { NgForm, FormBuilder, FormArray, FormGroup, Validators } from '@angular/forms';
-import {  } from '@angular/forms';
-import { LocalstorageService } from './localstorage.service';
-import { Telephone, Hobbie } from './person';
 import { ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/map';
+
+import { LocalstorageService } from './localstorage.service';
+import { Telephone, Hobbie } from './person';
 import { forbiddenNamesValidator } from './forbidden-names.directive';
 
 @Component({
@@ -18,32 +18,33 @@ export class PersonInformationComponent {
   personInformationForm;
 
   formErrors = {
+    'firstName': '',
+    'lastName': '',
+    'email': '',
+    'skype': '',
     'nickname': ''
   };
 
   validationMessages = {
+    'firstName': {
+      'required':      'First Name is required.',
+      'minlength':     'First Name must be at least 4 characters long.'
+    },
+    'lastName': {
+      'required':      'Last Name is required.',
+      'minlength':     'Last Name must be at least 4 characters long.'
+    },
+    'email': {
+      'required':      'Email is required.',
+      'pattern':       'Email should contain an "@" and a "." symbols.'
+    },
+    'skype': {
+      'minlength':     'Skype must be at least 4 characters long.'
+    },
     'nickname': {
-      'required':       'First Name is required.',
       'forbiddenNames': 'Nickname cannot be "god", "devil" or "president".'
     }
   };
-
-  onValueChanged(data?: any) {
-    if (!this.personInformationForm) { return; }
-    const form = this.personInformationForm;
-
-    for (const field of Object.keys(this.formErrors)) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
-
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key of Object.keys(control.errors)) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
-    }
-  }
 
   setTelephones(telephones: Telephone[]) {
     const telephonesFCs = telephones.map(telephone => this.fb.group(telephone));
@@ -65,6 +66,32 @@ export class PersonInformationComponent {
     return this.personInformationForm.get('hobbies') as FormArray;
   };
 
+  constructor(private service: LocalstorageService, private route: ActivatedRoute, private fb: FormBuilder) {
+    this.createForm();
+  }
+
+  onSubmit() {
+    this.service.editPerson(this.personInformationForm.value, this.id);
+    this.createForm();
+  }
+
+  onValueChanged(data?: any) {
+    if (!this.personInformationForm) { return; }
+    const form = this.personInformationForm;
+
+    for (const field of Object.keys(this.formErrors)) {
+      this.formErrors[field] = '';
+      const control = form.get(field);
+
+      if (control && control.dirty && !control.valid) {
+        const messages = this.validationMessages[field];
+        for (const key of Object.keys(control.errors)) {
+          this.formErrors[field] += messages[key] + ' ';
+        }
+      }
+    }
+  }
+
   addTelephone() {
     this.telephones.push(this.fb.group(new Telephone('')));
   }
@@ -74,19 +101,21 @@ export class PersonInformationComponent {
   }
 
   createForm() {
-    this.route.params.map((p: any) => p.id).subscribe(data => {
-      this.id = data;
-    });
+    this.route.params
+      .map((p: any) => p.id)
+      .subscribe(data => {
+        this.id = data;
+      });
     const personFromLocalStorage = this.service.getPerson(this.id);
     this.personInformationForm = this.fb.group({
       hobbies: this.fb.array(personFromLocalStorage.hobbies || [new Hobbie('')]),
       telephones: this.fb.array(personFromLocalStorage.telephones || [new Telephone('')]),
       nickname: [personFromLocalStorage.nickname, forbiddenNamesValidator(/god|president|devil/i)],
-      firstName: personFromLocalStorage.firstName,
-      lastName: personFromLocalStorage.lastName,
-      email: personFromLocalStorage.email,
+      firstName: [personFromLocalStorage.firstName, [Validators.required, Validators.minLength(4)]],
+      lastName: [personFromLocalStorage.lastName, [Validators.required, Validators.minLength(4)]],
+      email: [personFromLocalStorage.email, [Validators.required, Validators.pattern(/.+@.+\..+/)]],
       age: personFromLocalStorage.age,
-      skype: personFromLocalStorage.skype,
+      skype: [personFromLocalStorage.skype, [Validators.minLength(4)]],
       id: personFromLocalStorage.id
     });
     this.setHobbies(personFromLocalStorage.hobbies || [new Hobbie('')]);
@@ -94,10 +123,6 @@ export class PersonInformationComponent {
     this.personInformationForm.valueChanges
       .subscribe(data => this.onValueChanged(data));
     this.id = Number(this.id);
-  }
-
-  constructor(private service: LocalstorageService, private route: ActivatedRoute, private fb: FormBuilder) {
-    this.createForm();
   }
 
 }
