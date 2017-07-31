@@ -16,7 +16,7 @@ export class LocalstorageService {
 
   editPerson(person, id) {
     let persons = this.getPersons();
-    persons = persons.map(p => p.id.toString() === id ? person : p);
+    persons = persons.map(p => p.id === id ? person : p);
     localStorage['persons'] = JSON.stringify(persons);
   }
 
